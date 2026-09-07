@@ -119,9 +119,6 @@
 
             const [busTarget, setBusTarget] = useState(BUS_STOPS[1]);
 
-            // 定義活動的工作坊分享連結 (由您指定的網址)
-            const playLink = "https://mm7-lab.github.io/Elderly-Vision-Simulator/";
-
             const spawnMonologue = useCallback(() => {
                 const text = MONOLOGUES[Math.floor(Math.random() * MONOLOGUES.length)];
                 const emoji = Math.random() > 0.5 ? '👴' : '👵';
@@ -217,17 +214,6 @@
                 setIsShiftingGaze(false);
                 setCurrentMTRTargetIndex(0);
                 setActiveMonologues([]);
-            };
-
-            const handleCopyLink = () => {
-                // 使用相容性最高的傳統複製法，避免 iframe 限制導致 navigator.clipboard 失敗
-                const tempInput = document.createElement("input");
-                tempInput.value = playLink;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand("copy");
-                document.body.removeChild(tempInput);
-                showFeedback("✅ 遊戲網址已複製！");
             };
 
             const FilterOverlay = () => {
@@ -340,7 +326,7 @@
                             <div className="flex flex-col items-center justify-center min-h-full space-y-6 sm:space-y-8 animate-fade-in py-8">
                                 <div className="text-center space-y-3 sm:space-y-4">
                                     <div className="flex justify-center mb-2">
-                                        {/* 向量裝飾大圖示 (純圖示，完美適配 Google Sites) */}
+                                        {/* 向量裝飾大圖示 */}
                                         <div className="bg-orange-100 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-inner">
                                             <svg className="w-10 h-10 sm:w-12 sm:h-12 text-orange-500" viewBox="0 0 100 100">
                                                 <circle cx="35" cy="50" r="12" fill="none" stroke="currentColor" strokeWidth="6"/>
@@ -386,32 +372,6 @@
                                             </div>
                                         </button>
                                     ))}
-                                </div>
-
-                                {/* Google Sites 專用優化板塊：精簡版一鍵複製與新視窗，無 QR Code 佔位 */}
-                                <div className="w-full max-w-md pt-4 animate-fade-in">
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 text-center space-y-3">
-                                        <h4 className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2 justify-center">
-                                            <span>🔗</span> 投放與分享設定
-                                        </h4>
-                                        <p className="text-xs text-slate-500 leading-normal px-2">
-                                            如果此遊戲是以 iframe 嵌入在 Google Sites 內，建議點選下方按鈕以獨立新分頁開啟，可獲取最佳的手機與平板滿版遊玩體驗。
-                                        </p>
-                                        <div className="flex gap-3 justify-center pt-1">
-                                            <button 
-                                                onClick={() => window.open(playLink, '_blank')}
-                                                className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm"
-                                            >
-                                                新視窗開啟 🌐
-                                            </button>
-                                            <button 
-                                                onClick={handleCopyLink}
-                                                className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition border border-slate-200"
-                                            >
-                                                複製連結 📋
-                                            </button>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         )}

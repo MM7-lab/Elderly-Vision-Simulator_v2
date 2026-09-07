@@ -220,46 +220,37 @@
             };
 
             const handleCopyLink = () => {
-                // 使用 document.execCommand 確保在 iFrame (如 Google Sites) 中也能正常運作
-                const textArea = document.createElement("textarea");
-                textArea.value = playLink;
-                
-                // 隱藏 textarea 並避免畫面跳動
-                textArea.style.position = "fixed";
-                textArea.style.left = "-999999px";
-                textArea.style.top = "-999999px";
-                document.body.appendChild(textArea);
-                
-                textArea.focus();
-                textArea.select();
-                
-                try {
-                    const successful = document.execCommand('copy');
-                    if (successful) {
-                        showFeedback('✅ 遊戲網址已複製！');
-                    } else {
-                        showFeedback('複製失敗，請手動複製。', true);
-                    }
-                } catch (err) {
-                    showFeedback('複製失敗，請手動複製。', true);
-                }
-                
-                document.body.removeChild(textArea);
+                // 使用相容性最高的傳統複製法，避免 iframe 限制導致 navigator.clipboard 失敗
+                const tempInput = document.createElement("input");
+                tempInput.value = playLink;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                showFeedback("✅ 遊戲網址已複製！");
             };
 
             const FilterOverlay = () => {
                 if (filter === 'cataracts') {
                     const blurAmount = 1 + (fatigue / 100) * 3;
                     return (
-                        <div 
-                            className="pointer-events-none fixed inset-0 z-50 mix-blend-multiply"
-                            style={{ 
-                                /* 同時支援標準語法與 Safari/iPad 專用 WebKit 語法 */
-                                backdropFilter: `blur(${blurAmount}px) contrast(70%) sepia(40%)`,
-                                WebkitBackdropFilter: `blur(${blurAmount}px) contrast(70%) sepia(40%)`,
-                                backgroundColor: `rgba(200, 180, 100, ${0.1 + fatigue/400})` 
-                            }} 
-                        />
+                        <React.Fragment>
+                            {/* 第一層：純模糊層。將 backdrop-filter 獨立出來，避開 iOS Safari 的渲染 Bug */}
+                            <div 
+                                className="pointer-events-none fixed inset-0 z-[50]"
+                                style={{ 
+                                    backdropFilter: `blur(${blurAmount}px)`,
+                                    WebkitBackdropFilter: `blur(${blurAmount}px)`
+                                }} 
+                            />
+                            {/* 第二層：色彩混疊層。負責處理白內障的視覺黃化與對比度下降 */}
+                            <div 
+                                className="pointer-events-none fixed inset-0 z-[51] mix-blend-multiply"
+                                style={{ 
+                                    backgroundColor: `rgba(220, 200, 150, ${0.15 + fatigue/400})`
+                                }} 
+                            />
+                        </React.Fragment>
                     );
                 }
                 if (filter === 'macular') {
